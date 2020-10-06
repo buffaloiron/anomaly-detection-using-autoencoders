@@ -8,7 +8,9 @@ import torch
 from trainer import train
 from model import AnomalyAE
 from datetime import datetime
+#from tensorboardX import SummaryWriter
 
+#writer = SummaryWriter('.Result')
 def create_datagen(data_dir, batch_size=8):
     transform = Compose([Grayscale(), ToTensor()])
     dataset = ImageFolder(data_dir, transform=transform)
@@ -41,12 +43,13 @@ if __name__ == "__main__":
                         help="Please specify the batch_size")
     parser.add_argument('--val_batch_size',
                         type=int,
-                        default=4,
+                        default=1,
                         help="Please specify the batch_size")
 
     parser.add_argument(
         "--log_dir", type=str,
-        default=f'tensorboard_logs_{datetime.now().strftime("%d%m%Y_%H-%M")}',
+        default='tensorboard_logs',
+        #default=f'tensorboard_logs_{datetime.now().strftime("%d%m%Y_%H-%M")}',
         help="log directory for Tensorboard log output"
     )
     parser.add_argument(
@@ -65,7 +68,6 @@ if __name__ == "__main__":
     train_loader = create_datagen(args.train_dir, args.train_batch_size)
     val_loader = create_datagen(args.val_dir, args.val_batch_size)
     model = AnomalyAE()
-
     train(model, optimizer, loss, train_loader,
           val_loader, args.log_dir, device, args.epochs,
           args.log_interval,
